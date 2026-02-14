@@ -68,7 +68,10 @@ testloader = torch.utils.data.DataLoader(
 def train_and_eval(weight_decay, train_loader, eval_loader, epochs=NUM_EPOCHS, silent=True):
     model = SoftmaxLinear().to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, weight_decay=weight_decay)
+
+    # we can use different optimizers here, but SGD + momentum works best in this case
+    # SGD + momentum > SGD ~= Adam > RMSprop(pretty bad results in this case)
+    optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, weight_decay=weight_decay, momentum=0.9)
 
     # training loop
     for epoch in range(epochs):
