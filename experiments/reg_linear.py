@@ -12,7 +12,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Hyperparameters for search
 NUM_EPOCHS = 10
 BATCH_SIZE = 64
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.001 # performed better (2-3% higher accuracy) than 0.01
 VALIDATION_SIZE = 5000  # Number of images to use for validation
 
 transform = transforms.Compose([
@@ -26,10 +26,15 @@ full_trainset = torchvision.datasets.CIFAR10(
 )
 
 # Split training set into train and validation
-indices = list(range(len(full_trainset)))
-np.random.shuffle(indices)
-train_idx, val_idx = indices[VALIDATION_SIZE:], indices[:VALIDATION_SIZE]
+indices = list(range(len(full_trainset)))       #[0, 1, 2, ..., 49999]
+np.random.shuffle(indices)         #[35000, 35001, ..., 49999, 0,]
 
+
+train_idx, val_idx = indices[VALIDATION_SIZE:], indices[:VALIDATION_SIZE]
+#[last 45k elements] and [first 5k elements]
+
+
+#sampler
 train_sampler = SubsetRandomSampler(train_idx)
 val_sampler = SubsetRandomSampler(val_idx)
 
@@ -65,6 +70,8 @@ def train_and_eval(weight_decay, train_loader, eval_loader, epochs=NUM_EPOCHS, s
 
             optimizer.zero_grad()
             outputs = model(images)
+
+            # cross entropy loss (softmax + negative log likelihood loss)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
