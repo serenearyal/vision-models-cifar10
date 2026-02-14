@@ -19,13 +19,16 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Hyperparameters for search
 NUM_EPOCHS = 10
 BATCH_SIZE = 64
-LEARNING_RATE = 0.001 # performed better (2-3% higher accuracy) than 0.01
+# 0.001 performed better (2-3% higher accuracy) than 0.01
+#after normalizing the data, 0.0001 performed better (2-3% higher accuracy) than 0.001
+LEARNING_RATE = 0.0001
 VALIDATION_SIZE = 5000  # Number of images to use for validation
 RUN_HPARAM_SEARCH = False
 
 
 transform = transforms.Compose([
-    transforms.ToTensor()
+    transforms.ToTensor(),
+    transforms.Normalize(mean=(0.4914, 0.4822, 0.4465), std=(0.2023, 0.1994, 0.2010))
 ])
 
 # Load training dataset
