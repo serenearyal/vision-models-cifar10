@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -14,6 +21,8 @@ NUM_EPOCHS = 10
 BATCH_SIZE = 64
 LEARNING_RATE = 0.001 # performed better (2-3% higher accuracy) than 0.01
 VALIDATION_SIZE = 5000  # Number of images to use for validation
+RUN_HPARAM_SEARCH = False
+
 
 transform = transforms.Compose([
     transforms.ToTensor()
@@ -96,24 +105,32 @@ def train_and_eval(weight_decay, train_loader, eval_loader, epochs=NUM_EPOCHS, s
     accuracy = 100 * correct / total
     return accuracy, model
 
-# Hyperparameter search
-weight_decays = [0.0, 1e-5, 1e-4, 1e-3, 1e-2]
-best_wd = None
-best_val_acc = -1
+if RUN_HPARAM_SEARCH:
+    # Hyperparameter search
+    weight_decays = [0.0, 1e-5, 1e-4, 1e-3, 1e-2]
+    best_wd = None
+    best_val_acc = -1
 
-print(f"Starting hyperparameter search on validation set (Epochs: {NUM_EPOCHS})...")
-for wd in weight_decays:
-    print(f"Testing weight decay: {wd}")
-    val_acc, _ = train_and_eval(wd, trainloader, valloader)
-    print(f"Validation Accuracy: {val_acc:.2f}%")
-    
-    if val_acc > best_val_acc:
-        best_val_acc = val_acc
-        best_wd = wd
+    print(f"Starting hyperparameter search on validation set (Epochs: {NUM_EPOCHS})...")
+    for wd in weight_decays:
+        print(f"Testing weight decay: {wd}")
+        val_acc, _ = train_and_eval(wd, trainloader, valloader)
+        print(f"Validation Accuracy: {val_acc:.2f}%")
+        
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+            best_wd = wd
 
-print(f"\nBest weight decay found: {best_wd} (Val Accuracy: {best_val_acc:.2f}%)")
+    print(f"\nBest weight decay found: {best_wd} (Val Accuracy: {best_val_acc:.2f}%)")
 
-# Final evaluation on test set
-print(f"\nPerforming final evaluation on test set with best weight decay ({best_wd})...")
-test_acc, final_model = train_and_eval(best_wd, trainloader, testloader, epochs=NUM_EPOCHS, silent=False)
-print(f"Final Test Accuracy: {test_acc:.2f}%")
+    # Final evaluation on test set
+    print(f"\nPerforming final evaluation on test set with best weight decay ({best_wd})...")
+    test_acc, final_model = train_and_eval(best_wd, trainloader, testloader, epochs=NUM_EPOCHS, silent=False)
+    print(f"Final Test Accuracy: {test_acc:.2f}%")
+else:
+    # Final evaluation on test set
+    #i have ran the hyper parameter search and found the best weight decay to be 1e-2
+    best_wd = 1e-2
+    print(f"\nPerforming final evaluation on test set with best weight decay ({best_wd})...")
+    test_acc, final_model = train_and_eval(best_wd, trainloader, testloader, epochs=NUM_EPOCHS, silent=False)
+    print(f"Final Test Accuracy: {test_acc:.2f}%")
