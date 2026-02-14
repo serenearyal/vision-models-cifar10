@@ -28,7 +28,9 @@
 
 ## Stage 4: Added Momentum
 
-- Optimizer: SGD + momentum (0.9)
+- Tested optimizers:
+  - SGD + momentum > SGD ~= Adam > RMSprop
+- Optimizer Used: SGD + momentum (0.9)
 - Outcome: Slight improvement; training stabilized
 
 ---
