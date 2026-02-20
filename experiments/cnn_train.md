@@ -4,4 +4,9 @@
   - batch_size = 128
 
 - data augmentation (random crop & random horizontal flip):
-  - increased accuracy by ~3% to ~75%
+  - increased accuracy by ~3-4% to ~75.9%
+
+- added batchnorm; increased accuracy by ~3% to ~78.9%
+
+- added dropout; slight less accuracy.
+  - probably because only 10 epochs
