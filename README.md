@@ -28,7 +28,7 @@ note: the final accuracy in most experiments is incremental, for more details, s
 
 ## Convolutional Neural Network (CNN)
 
-- created cnn.py model
+- created cnn.py model (3 conv layers + 2 FC layers)
 - created cnn_train.py experiment
 - ~79% accuracy (with data augmentation and batchnorm)
 - LR = 0.01
@@ -37,7 +37,7 @@ note: the final accuracy in most experiments is incremental, for more details, s
 
 ## Residual Network (ResNet)
 
-- created resnet.py model
+- created resnet.py model (ResNet-14: 13 conv layers + 1 FC layer)
 - created resnet_train.py experiment
 - ~86% accuracy (10 epochs), ~92% accuracy (30 epochs)
 - LR = 0.1 (higher LR enabled by skip connections which stabilize gradient flow in deeper networks)

@@ -1,3 +1,4 @@
+- Architecture: 3 convolutional layers + 2 FC layers
 - First baseline accuracy acheived ~72%
   - LR = 0.01
   - weight_decay = 1e-5
