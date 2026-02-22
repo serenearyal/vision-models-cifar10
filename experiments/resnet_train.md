@@ -5,6 +5,16 @@
 
 ---
 
+Layer count:
+
+- Initial conv: 1 layer
+- Layer1: 2 blocks × 2 convs each = 4 layers
+- Layer2: 2 blocks × 2 convs each = 4 layers
+- Layer3: 2 blocks × 2 convs each = 4 layers
+- FC layer: 1 layer
+
+- Total: 13 convolutional layers + 1 FC = 14-layer ResNet
+
 ## Architecture Diagram
 
 ### Complete Network Flow
