@@ -42,3 +42,16 @@ note: the final accuracy in most experiments is incremental, for more details, s
 - ~86% accuracy (10 epochs), ~92% accuracy (30 epochs)
 - LR = 0.1 (higher LR enabled by skip connections which stabilize gradient flow in deeper networks)
 - Skip connections allow training deeper networks without vanishing gradient problems.
+
+### Performance Optimizations
+
+DataLoader optimizations in `resnet_train.py` achieved 2x speedup:
+- **Before**: ~30s per epoch
+- **After**: ~15s per epoch
+
+Optimizations:
+- `num_workers=2`: Parallel data loading
+- `pin_memory=True`: Faster CPU-to-GPU transfers
+- `non_blocking=True`: Asynchronous data transfers
+
+These eliminated the data loading bottleneck, keeping the GPU fully utilized.

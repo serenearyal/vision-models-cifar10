@@ -11,6 +11,7 @@ import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
+import time
 from models.resnet import SimpleResNet
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -47,7 +48,7 @@ trainset = torchvision.datasets.CIFAR10(
 )
 
 trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=BATCH_SIZE, shuffle=True
+    trainset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2, pin_memory=True
 )
 
 # Load test dataset
@@ -57,7 +58,7 @@ testset = torchvision.datasets.CIFAR10(
 )
 
 testloader = torch.utils.data.DataLoader(
-    testset, batch_size=BATCH_SIZE, shuffle=False
+    testset, batch_size=BATCH_SIZE, shuffle=False, num_workers=2, pin_memory=True
 )
 
 def train_and_eval(train_loader, eval_loader, epochs=NUM_EPOCHS, silent=False):
@@ -71,22 +72,26 @@ def train_and_eval(train_loader, eval_loader, epochs=NUM_EPOCHS, silent=False):
     for epoch in range(epochs):
         model.train()
         running_loss = 0.0
+        epoch_start = time.time()
+        
         for images, labels in train_loader:
-            images = images.to(device)
-            labels = labels.to(device)
+            images = images.to(device, non_blocking=True)
+            labels = labels.to(device, non_blocking=True)
 
             optimizer.zero_grad()
+            
             outputs = model(images)
-
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
+            
             running_loss += loss.item()
 
         scheduler.step()
+        epoch_time = time.time() - epoch_start
 
         if not silent:
-            print(f"  Epoch {epoch+1}/{epochs}, Loss: {running_loss/len(train_loader):.4f}, LR: {scheduler.get_last_lr()[0]:.6f}")
+            print(f"  Epoch {epoch+1}/{epochs}, Loss: {running_loss/len(train_loader):.4f}, LR: {scheduler.get_last_lr()[0]:.6f}, Time: {epoch_time:.2f}s")
 
     # evaluation
     correct = 0
@@ -94,8 +99,9 @@ def train_and_eval(train_loader, eval_loader, epochs=NUM_EPOCHS, silent=False):
     model.eval()
     with torch.no_grad():
         for images, labels in eval_loader:
-            images = images.to(device)
-            labels = labels.to(device)
+            images = images.to(device, non_blocking=True)
+            labels = labels.to(device, non_blocking=True)
+            
             outputs = model(images)
             _, predicted = outputs.max(1)
             total += labels.size(0)
