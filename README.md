@@ -45,13 +45,6 @@ note: the final accuracy in most experiments is incremental, for more details, s
 
 ### Performance Optimizations
 
-DataLoader optimizations in `resnet_train.py` achieved 2x speedup:
-- **Before**: ~30s per epoch
-- **After**: ~15s per epoch
+DataLoader optimizations (`num_workers=2`, `pin_memory=True`, `non_blocking=True`) achieved 2x speedup: 30s → 15s per epoch.
 
-Optimizations:
-- `num_workers=2`: Parallel data loading
-- `pin_memory=True`: Faster CPU-to-GPU transfers
-- `non_blocking=True`: Asynchronous data transfers
-
-These eliminated the data loading bottleneck, keeping the GPU fully utilized.
+Note: AMP (16-bit precision) tested but provided no benefit for this small model. May help larger models where computation is the bottleneck.
