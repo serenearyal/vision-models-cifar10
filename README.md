@@ -48,3 +48,11 @@ note: the final accuracy in most experiments is incremental, for more details, s
 DataLoader optimizations (`num_workers=2`, `pin_memory=True`, `non_blocking=True`) achieved 2x speedup: 30s → 15s per epoch.
 
 Note: AMP (16-bit precision) tested but provided no benefit for this small model. May help larger models where computation is the bottleneck.
+
+---
+
+## Vision Transformer (ViT-B/16)
+
+- created vit_train.py experiment (torchvision ViT-B/16, ImageNet pretrained)
+- ~94% accuracy with frozen backbone, head-only training (5 epochs)
+- See experiments/README_VIT.md for details, options, and how to run.
